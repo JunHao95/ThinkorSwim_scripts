@@ -1,0 +1,22 @@
+#TRADEBRIGADE Breadth Script
+
+input market = {default NYSE, NASDAQ};
+
+def UVOL = close(“$UVOL”);
+def DVOL = close(“$DVOL”);
+def UVOLQ = close(“$UVOL/Q”);
+def DVOLQ = close(“$DVOL/Q”);
+
+#NYSE Breadth ratio
+def NYSEratio =  if (UVOL >= DVOL) then (UVOL / DVOL) else -(DVOL / UVOL);
+AddLabel(yes, Concat(Round(NYSEratio, 2), ” :1 NYSE”), (if NYSEratio >= 0 then Color.GREEN else Color.RED));
+
+#Nasdaq Breadth ratio
+def NASDratio =  if (UVOLQ >= DVOLQ) then (UVOLQ / DVOLQ) else -(DVOLQ / UVOLQ) ;
+AddLabel(yes, Concat(Round(NASDratio, 2), ” :1 NASD”), (if NASDratio >= 0 then Color.GREEN else Color.RED));
+
+#Histogram Function
+plot Breadth = if market then NASDratio else NYSEratio;
+Breadth.AssignValueColor(if Breadth >= 0 then Color.GREEN else Color.RED);
+Breadth.SetPaintingStrategy(PaintingStrategy.HISTOGRAM);
+Breadth.SetLineWeight(1);
